@@ -27,13 +27,18 @@
             <artifactId>spring-web</artifactId>
             <version>4.2.0.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+        </dependency>
     </dependencies>
 
     <repositories>
         <repository>
             <id>central</id>
             <name>Central Repository</name>
-            <url>https://repo.maven.apache.org/maven2</url>
+            <url>http://maven.oa.com/nexus/content/groups/public/</url>
             <layout>default</layout>
             <snapshots>
                 <enabled>false</enabled>
