@@ -11,7 +11,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">用户列表</div>
-    <table class="table">
+    <table class="table table-hover">
     <tr>
         <th>序号</th>
         <th>ID</th>

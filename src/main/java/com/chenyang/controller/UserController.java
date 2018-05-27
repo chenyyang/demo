@@ -27,9 +27,12 @@ public class UserController {
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
     public int test(@RequestParam("name") String name, @RequestParam("age") Integer age) {
         logger.info("name:" + name + ", age:" + age);
-        int id = userDao.addUser(name, age);
-        logger.info("name:" + name + ", age:" + age + ",id:" + id);
-        return id;
+        User user = new User();
+        user.setAge(age);
+        user.setName(name);
+        userDao.addUser(user);
+        logger.info(user.toString());
+        return user.getId();
     }
 
     @ResponseBody

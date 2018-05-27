@@ -16,8 +16,8 @@ public interface UserDao {
     User getUser(@Param("id")int id);//@param表示上面sql中的参数
 
     @Insert("insert into users set name = #{name} ,age=#{age} ") //以#{}的方式表示sql中的参数
-    @SelectKey(statement="call identity()", keyProperty="id", before=false, resultType=int.class)
-    int addUser(@Param("name")String name,@Param("age")int age);//@param表示上面sql中的参数
+    @SelectKey(statement="SELECT LAST_INSERT_ID() AS id ", keyProperty="id", before=false, resultType=int.class)
+    int addUser(User user);//@param表示上面sql中的参数
 
     @Select("select * from users ") //以#{}的方式表示sql中的参数
     List<User> getAllUser();//@param表示上面sql中的参数
