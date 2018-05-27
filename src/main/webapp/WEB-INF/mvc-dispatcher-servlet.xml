@@ -4,7 +4,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                         http://www.springframework.org/schema/mvc
@@ -25,11 +25,62 @@
     <!--自动扫描目录下所有的类文件 -->
     <context:component-scan base-package="com.chenyang" />
 
-    <!--ViewResolver 视图解析器-->
-    <!--用于支持Servlet、JSP视图解析-->
-    <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <!-- 使用PropertyOverrideConfigurer后处理器加载数据源参数 -->
+    <context:property-override location="classpath:db.properties"/>
+
+    <!-- 配置c3p0数据源 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"/>
+
+
+
+    <!--&lt;!&ndash; 配置数据源 &ndash;&gt;-->
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">-->
+    <!--<property name="driverClassName" value="com.mysql.jdbc.Driver" />-->
+    <!--<property name="url" value="jdbc:mysql://139.199.179.203:3306/mybatis" />-->
+    <!--<property name="username" value="root" />-->
+    <!--<property name="password" value="root" />-->
+    <!--<property name="maxActive" value="10" />-->
+    <!--<property name="maxIdle" value="5" />-->
+    <!--</bean>-->
+
+    <!-- 配置sqlSessionFactory，SqlSessionFactoryBean是用来产生sqlSessionFactory的 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 加载mybatis的全局配置文件，放在classpath下的mybatis文件夹中了 -->
+        <!--<property name="configLocation" value="SqlMapConfig.xml" />-->
+        <!-- 加载数据源，使用上面配置好的数据源 -->
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!--<bean id="userDao" class="org.mybatis.spring.mapper.MapperFactoryBean">-->
+    <!--<property name="mapperInterface" value="com.chenyang.dao.UserDao" />-->
+    <!--<property name="sqlSessionFactory" ref="sqlSessionFactory" />-->
+    <!--</bean>-->
+
+
+    <!--自动扫描com/hys/app/**/dao下的所有dao接口，并实现这些接口，可直接在程序中使用dao接口，不用再获取sqlsession对象 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- basePackage 属性是映射器接口文件的包路径。 你可以使用分号或逗号作为分隔符设置多于一个的包路径 -->
+        <property name="basePackage" value="com/chenyang/dao"/>
+        <!--
+                  因为会自动装配 SqlSessionFactory和SqlSessionTemplate
+                  所以没 有 必 要去 指 定 SqlSessionFactory或SqlSessionTemplate
+                  因此可省略不配置；
+                  但是,如果你使 用了一个 以上的 DataSource，那么自动装配可能会失效。
+                  这种 情况下，你可以使用sqlSessionFactoryBeanName或sqlSessionTemplateBeanName属性来设置正确的 bean名称来使用；
+        -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+
+    <!-- JDBC事务管理器 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="dataSource"/>
+
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/html/"/>
+        <property name="prefix" value="/views/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
